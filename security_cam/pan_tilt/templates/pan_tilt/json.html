@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>coordenadas</title>
+    </head>
+    <body>
+        <p>{"dx": {{ dx }},"dy": {{ dy }}}</p>
+    </body>
+
+<script>
+    var req = new XMLHttpRequest();
+    req.open('GET', '/pan_tilt/json/', True);
+    req.send();  
+</script>
+  </html>
+
+

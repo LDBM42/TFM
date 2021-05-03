@@ -1,0 +1,117 @@
+{% load static %}
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <title>JOYSTICK VIRTUAL</title>
+        <link href="{% static 'pan_tilt/styles.css' %}" rel='stylesheet'>
+    </head>
+	
+	<body>
+		<div id="container"></div>
+		<div id="info">
+
+            <h1 id='app'></h1>
+            <!-- <input type="number" id="X" value="180"> -->
+
+
+            <b>JOYSTICK VIRTUAL</b><br><br>
+            
+			
+			Toca la pantalla para moverlo
+			-
+			También se puede utilizar el ratón
+			<br>
+			<span id="result"></span>
+        </div> 
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        <script src="{% static 'pan_tilt/virtualjoystick.js' %}"></script>
+        <script>
+			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
+	
+			var joystick	= new VirtualJoystick({
+				container	: document.getElementById('container'),
+				mouseSupport	: true,
+			});
+			joystick.addEventListener('touchStart', function(){
+				console.log('down')
+			})
+			joystick.addEventListener('touchEnd', function(){
+				console.log('up')
+			})
+			
+			var deltaXprevia = 0;
+			var deltaYprevia = 0;
+			var deltaX_corregida = 0;
+			var deltaY_corregida = 0;
+            var Socket = new WebSocket('ws://192.168.2.228:81/ws/pan_tilt/');
+            
+            // function sleep(milliseconds) {
+            //     const date = Date.now();
+            //     let currentDate = null;
+            //     do {
+            //         currentDate = Date.now();
+            //     } while (currentDate - date < milliseconds);
+            // }
+
+			setInterval(function(){
+                if (screen.width >= screen.height){
+                    var stickRadius = screen.height*0.35;
+                }
+                else {
+                    var stickRadius = screen.width*0.35;
+                };
+				
+				center = 90
+				var deltaX_corregida=(-joystick.deltaX()/stickRadius*center).toFixed();
+				deltaX_corregida = (deltaX_corregida-(-center))
+
+                var deltaY_corregida=(-joystick.deltaY()/stickRadius*center).toFixed();				
+				deltaY_corregida = (deltaY_corregida-(-center))
+                var stick = Math.sqrt((deltaX_corregida*deltaX_corregida)+(deltaY_corregida*deltaY_corregida)).toFixed();
+                
+				if (deltaX_corregida >= 0 & deltaY_corregida >= 0){
+                    var angulo = (Math.atan(deltaY_corregida/deltaX_corregida)/(2*Math.PI)*360).toFixed()
+                }
+                if (deltaX_corregida < 0) {
+                    var angulo = ((Math.atan(deltaY_corregida/deltaX_corregida)/(2*Math.PI)*360)+180).toFixed()
+                }
+                if (deltaX_corregida >= 0 & deltaY_corregida < 0){
+                    var angulo = ((Math.atan(deltaY_corregida/deltaX_corregida)/(2*Math.PI)*360)+360).toFixed()
+                }
+            
+                var outputEl = document.getElementById('result');
+                outputEl.innerHTML  = '<b>RESULTADO: </b>'
+                + '<b> dx:</b>'+deltaX_corregida
+                + '<b> dy:</b>'+deltaY_corregida
+                + '<b> Vector (stick):</b>'+stick
+                + '<br><b> Ángulo:</b>'+angulo
+                + '<b> Orientación:</b>'
+                + (joystick.right() ? ' Derecha'   : '')
+                + (joystick.up()    ? ' Arriba'    : '')
+                + (joystick.left()  ? ' Izquierda' : '')
+                + (joystick.down()  ? ' Abajo'     : '')
+
+                if (deltaX_corregida != deltaXprevia || deltaY_corregida != deltaYprevia ){
+
+                    // var until = document.getElementById('X').value
+
+                    $.ajax({
+                        type:"POST",
+                        url:"/",
+                        data: {
+                                'dx': deltaX_corregida,
+                                'dy': deltaY_corregida
+                        },
+                    });
+                    
+    				deltaXprevia = deltaX_corregida;
+    				deltaYprevia = deltaY_corregida;
+  			    }
+			}, 1/30 * 1000);
+        </script>
+	</body>
+</html>
+
+
