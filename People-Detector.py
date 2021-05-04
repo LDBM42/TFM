@@ -49,7 +49,7 @@ actual_point = center_screen
 
 prev_dx, prev_dy, dx, dy = 90, 90, 90, 90 # centro del cervomotor
 centerX, centerY  = (int(w/2), int(h/2))
-with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam_RL\\coordenadas.txt','w') as f:
+with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam\\coordenadas.txt','w') as f:
                 f.write('{"dx":' + str(dx) + ', "dy":' + str(dy) + '}')
 
 angulo_max, angulo_min = (180, 0)
@@ -116,7 +116,7 @@ while(True):
             movimiento_en_X += dx
             if (movimiento_en_X >= angulo_max): movimiento_en_X = 180
             elif (movimiento_en_X <= angulo_min): movimiento_en_X = 0
-            with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam_RL\\coordenadas.txt','w') as f:
+            with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam\\coordenadas.txt','w') as f:
                 f.write('{"dx":' + str(movimiento_en_X) + ', "dy":' + str(prev_dy) + '}')
             prev_dx = movimiento_en_X
 
@@ -125,7 +125,7 @@ while(True):
             movimiento_en_Y += dy
             if (movimiento_en_Y >= angulo_max): movimiento_en_Y = 180
             elif (movimiento_en_Y <= angulo_min): movimiento_en_Y = 0
-            with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam_RL\\coordenadas.txt','w') as f:
+            with open('E:\\DESKTOP\\MASTER INTELIGENCIA ARTIFICIAL\\TFM MAIR Trabajo Fin de Master\\Proyecto Joystick\\JoystickWifi\\security_cam\\coordenadas.txt','w') as f:
                 f.write('{"dx":' + str(prev_dx) + ', "dy":' + str(movimiento_en_Y) + '}')
             prev_dy = movimiento_en_Y
 
